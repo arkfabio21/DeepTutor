@@ -183,8 +183,8 @@ DEFAULT_UI_SETTINGS = {
 
 class UISettings(BaseModel):
     theme: Literal["light", "dark"] = "light"
-    language: Literal["zh", "en"] = "en"
-    output_language: Literal["zh", "en"] = "en"
+    language: Literal["zh", "en", "pt"] = "en"
+    output_language: Literal["zh", "en", "pt"] = "en"
 
 
 class FullSettingsResponse(BaseModel):
@@ -345,7 +345,7 @@ async def get_system_language():
 
 
 class SystemLanguageUpdate(BaseModel):
-    language: Literal["zh", "en"]
+    language: Literal["zh", "en", "pt"]
 
 
 @router.put("/system-language")

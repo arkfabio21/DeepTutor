@@ -76,16 +76,12 @@ class BaseAgent(ABC):
     def _load_prompts(self) -> dict[str, Any]:
         """Load prompt definitions for current Agent"""
         # Get language configuration (unified in config/main.yaml system.language)
-        language = self.config.get("system", {}).get("language", "zh")
+        language = self.config.get("system", {}).get("language", "en")
         lang_code = parse_language(language)
 
-        # Determine language directory: 'en' or 'zh' (unified language codes)
+        # Determine language directory: 'en', 'pt', or 'zh'
         # Note: research module prompts may be in 'cn' directory, we support both 'zh' and 'cn' for backward compatibility
-        if lang_code == "en":
-            lang_dir = "en"
-        else:
-            # Try 'zh' first, fall back to 'cn' for backward compatibility
-            lang_dir = "zh"
+        lang_dir = lang_code  # Use the parsed language code directly
 
         # Get prompts directory: from agents/base_agent.py -> research/prompts/
         prompts_dir = Path(__file__).parent.parent / "prompts"
@@ -99,28 +95,33 @@ class BaseAgent(ABC):
         if cache_key in BaseAgent._PROMPT_CACHE:
             return BaseAgent._PROMPT_CACHE[cache_key]
 
-        # Try loading specified language version first, fall back to 'cn' if 'zh' doesn't exist (backward compatibility)
-        if not prompt_file.exists() and lang_dir == "zh":
-            # If 'zh' version doesn't exist, try 'cn' for backward compatibility
-            prompt_file = prompts_dir / "cn" / f"{self.agent_name}.yaml"
-            if prompt_file.exists():
-                lang_dir = "cn"
-                cache_key = f"{self.agent_name}_{lang_dir}"
-            else:
-                # If neither 'zh' nor 'cn' exists, fall back to 'en'
+        # Fallback logic: pt -> en, zh -> cn -> en, en -> stays en
+        if not prompt_file.exists():
+            if lang_dir == "pt":
+                # Portuguese fallback to English
                 prompt_file = prompts_dir / "en" / f"{self.agent_name}.yaml"
                 lang_dir = "en"
                 cache_key = f"{self.agent_name}_{lang_dir}"
-        elif not prompt_file.exists() and lang_dir == "en":
-            # If English version doesn't exist, fall back to 'zh' or 'cn'
-            prompt_file = prompts_dir / "zh" / f"{self.agent_name}.yaml"
-            if prompt_file.exists():
-                lang_dir = "zh"
-                cache_key = f"{self.agent_name}_{lang_dir}"
-            else:
+            elif lang_dir == "zh":
+                # Chinese fallback to cn (backward compatibility)
                 prompt_file = prompts_dir / "cn" / f"{self.agent_name}.yaml"
-                lang_dir = "cn"
-                cache_key = f"{self.agent_name}_{lang_dir}"
+                if prompt_file.exists():
+                    lang_dir = "cn"
+                    cache_key = f"{self.agent_name}_{lang_dir}"
+                else:
+                    prompt_file = prompts_dir / "en" / f"{self.agent_name}.yaml"
+                    lang_dir = "en"
+                    cache_key = f"{self.agent_name}_{lang_dir}"
+            elif lang_dir == "en":
+                # English fallback to zh or cn
+                prompt_file = prompts_dir / "zh" / f"{self.agent_name}.yaml"
+                if prompt_file.exists():
+                    lang_dir = "zh"
+                    cache_key = f"{self.agent_name}_{lang_dir}"
+                else:
+                    prompt_file = prompts_dir / "cn" / f"{self.agent_name}.yaml"
+                    lang_dir = "cn"
+                    cache_key = f"{self.agent_name}_{lang_dir}"
         if cache_key in BaseAgent._PROMPT_CACHE:
             return BaseAgent._PROMPT_CACHE[cache_key]
 

@@ -34,6 +34,8 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import { apiUrl } from "@/lib/api";
 import { processLatexContent } from "@/lib/latex";
+import { useGlobal } from "@/context/GlobalContext";
+import { useTranslation } from "@/lib/i18n";
 
 interface NotebookRecord {
   id: string;
@@ -127,6 +129,8 @@ const getRecordColor = (type: string) => {
 };
 
 export default function NotebookPage() {
+  const { language } = useGlobal();
+  const t = useTranslation(language);
   const [notebooks, setNotebooks] = useState<NotebookSummary[]>([]);
   const [selectedNotebook, setSelectedNotebook] = useState<Notebook | null>(
     null,
@@ -472,7 +476,7 @@ export default function NotebookPage() {
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-              Notebooks
+              {t("Notebooks")}
             </h1>
             <div className="flex items-center gap-2">
               <button
@@ -508,16 +512,16 @@ export default function NotebookPage() {
         <div className="flex-1 overflow-y-auto p-2">
           {loading ? (
             <div className="p-8 text-center text-slate-400 dark:text-slate-500">
-              Loading...
+              {t("Loading")}
             </div>
           ) : filteredNotebooks.length === 0 ? (
             <div className="p-8 text-center">
               <FolderOpen className="w-12 h-12 text-slate-200 dark:text-slate-600 mx-auto mb-3" />
               <p className="text-slate-500 dark:text-slate-400 text-sm">
-                No notebooks yet
+                {t("No notebooks yet")}
               </p>
               <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">
-                Create your first notebook to get started
+                {t("Create your first notebook")}
               </p>
             </div>
           ) : (
@@ -582,7 +586,7 @@ export default function NotebookPage() {
                       <div className="flex items-center gap-3 mt-2 text-[10px] text-slate-400 dark:text-slate-500">
                         <span className="flex items-center gap-1">
                           <FileText className="w-3 h-3" />
-                          {nb.record_count} records
+                          {nb.record_count} {t("records")}
                         </span>
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
@@ -672,10 +676,10 @@ export default function NotebookPage() {
                 <div className="p-8 text-center">
                   <FileText className="w-12 h-12 text-slate-200 dark:text-slate-600 mx-auto mb-3" />
                   <p className="text-slate-500 dark:text-slate-400 text-sm">
-                    No records yet
+                    {t("No records in this notebook")}
                   </p>
                   <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">
-                    Add records from Solver, Question, Research, or Co-Writer
+                    {t("Add records by solving problems or generating questions")}
                   </p>
                 </div>
               ) : (
@@ -917,7 +921,7 @@ export default function NotebookPage() {
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-[400px] animate-in zoom-in-95">
             <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 dark:text-slate-100">
-                Create New Notebook
+                {t("Create Notebook")}
               </h3>
               <button
                 onClick={() => setShowCreateModal(false)}
@@ -988,7 +992,7 @@ export default function NotebookPage() {
                 onClick={() => setShowCreateModal(false)}
                 className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
-                Cancel
+                {t("Cancel")}
               </button>
               <button
                 onClick={handleCreateNotebook}
@@ -996,7 +1000,7 @@ export default function NotebookPage() {
                 className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                Create
+                {t("Create")}
               </button>
             </div>
           </div>
@@ -1084,7 +1088,7 @@ export default function NotebookPage() {
                 }}
                 className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
-                Cancel
+                {t("Cancel")}
               </button>
               <button
                 onClick={handleUpdateNotebook}
@@ -1092,7 +1096,7 @@ export default function NotebookPage() {
                 className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 <Check className="w-4 h-4" />
-                Save Changes
+                {t("Save")}
               </button>
             </div>
           </div>
@@ -1108,7 +1112,7 @@ export default function NotebookPage() {
                 <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
               </div>
               <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-2">
-                Delete Notebook?
+                {t("Delete")} {t("Notebooks")}?
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 This action cannot be undone. All records in this notebook will
@@ -1120,14 +1124,14 @@ export default function NotebookPage() {
                 onClick={() => setShowDeleteConfirm(null)}
                 className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
-                Cancel
+                {t("Cancel")}
               </button>
               <button
                 onClick={() => handleDeleteNotebook(showDeleteConfirm)}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
               >
                 <Trash2 className="w-4 h-4" />
-                Delete
+                {t("Delete")}
               </button>
             </div>
           </div>
@@ -1141,7 +1145,7 @@ export default function NotebookPage() {
             <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between shrink-0">
               <h3 className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Upload className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                Import Records
+                {t("Import Notebook")}
               </h3>
               <button
                 onClick={() => {
@@ -1170,7 +1174,7 @@ export default function NotebookPage() {
                   <option value="">Select a notebook...</option>
                   {availableNotebooks.map((nb) => (
                     <option key={nb.id} value={nb.id}>
-                      {nb.name} ({nb.record_count} records)
+                      {nb.name} ({nb.record_count} {t("records")})
                     </option>
                   ))}
                 </select>
@@ -1192,24 +1196,24 @@ export default function NotebookPage() {
                         }
                         className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
                       >
-                        Select All
+                        {t("Select All")}
                       </button>
                       <button
                         onClick={() => setSelectedImportRecords(new Set())}
                         className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                       >
-                        Clear
+                        {t("Clear")}
                       </button>
                     </div>
                   </div>
 
                   {loadingImport ? (
                     <div className="py-8 text-center text-slate-400 dark:text-slate-500">
-                      Loading records...
+                      {t("Loading")}
                     </div>
                   ) : importSourceRecords.length === 0 ? (
                     <div className="py-8 text-center text-slate-400 dark:text-slate-500">
-                      No records in this notebook
+                      {t("No records in this notebook")}
                     </div>
                   ) : (
                     <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -1269,7 +1273,7 @@ export default function NotebookPage() {
                 }}
                 className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
-                Cancel
+                {t("Cancel")}
               </button>
               <button
                 onClick={handleImportRecords}
@@ -1277,7 +1281,7 @@ export default function NotebookPage() {
                 className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Upload className="w-4 h-4" />
-                Import{" "}
+                {t("Import Notebook")}{" "}
                 {selectedImportRecords.size > 0 &&
                   `(${selectedImportRecords.size})`}
               </button>

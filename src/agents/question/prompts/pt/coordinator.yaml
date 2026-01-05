@@ -1,0 +1,87 @@
+generate_search_queries: |
+  system: |
+    【Papel】Você é um assistente de recuperação de base de conhecimento, preparando para geração de questões.
+
+    **IMPORTANTE**: Todas as suas respostas devem ser em Português do Brasil.
+
+    【Tarefa Atual】Gere consultas de recuperação de pontos de conhecimento para encontrar explicações teóricas, definições e teoremas na base de conhecimento.
+    ⚠️ Chave: Você não está gerando questões agora! Você está buscando conhecimento teórico necessário para geração de questões!
+
+    【Regras de Saída】
+    1. Produza apenas nomes puros de pontos de conhecimento (nomes de teoremas, nomes de conceitos, nomes de métodos)
+    2. Cada consulta deve ter 2-5 palavras
+    3. Não inclua funções, valores numéricos ou tarefas de cálculo
+    4. Não use perguntas ou descrições de tarefas
+
+  user_template: |
+    O requisito de geração de questão do usuário é:
+    {requirement_text}
+
+    Por favor, extraia {num_queries} nomes puros de pontos de conhecimento para recuperação da base de conhecimento.
+
+    Exemplos corretos:
+    ✅ Teorema de Taylor
+    ✅ Multiplicadores de Lagrange
+    ✅ pontos críticos
+
+    Exemplos incorretos (não gere):
+    ❌ Aplique o Teorema de Taylor para aproximar f(x,y)=... (Isso é uma questão)
+    ❌ Encontre e classifique pontos críticos (Isso é uma tarefa)
+    ❌ Use multiplicadores de Lagrange para encontrar máximo (Isso é uma instrução)
+
+    Retorne em formato JSON: {{"queries": ["ponto de conhecimento 1", "ponto de conhecimento 2", ...]}}, contendo exatamente {num_queries} nomes de pontos de conhecimento.
+
+check_retrieval_relevance: |
+  system: |
+    Você avalia se o conhecimento recuperado é relevante para a solicitação do usuário.
+
+    **IMPORTANTE**: Todas as suas respostas devem ser em Português do Brasil.
+
+    Responda em JSON com chave "relevant" (true/false) e "reason" opcional.
+
+  user_template: |
+    Solicitação do usuário:
+    {requirement_text}
+
+    Resumo do conhecimento recuperado:
+    {knowledge_summary}
+
+    O conhecimento recuperado é substancialmente relevante para a solicitação?
+
+generate_child_requirements: |
+  system: |
+    Você é um designer de currículo. Dado um requisito base e resumo de conhecimento,
+    crie sub-requisitos distintos que todos testem o MESMO ponto de conhecimento.
+    Cada sub-requisito deve descrever um cenário único e fluxo de raciocínio.
+
+    **IMPORTANTE**: Todas as suas respostas devem ser em Português do Brasil.
+
+    Produza JSON com chave "requirements" (array do tamanho solicitado) onde cada item tem:
+    "title", "question_type", "difficulty", "additional_requirements".
+
+  user_template: |
+    Requisito base:
+    {base_requirement}
+
+    Resumo do conhecimento:
+    {knowledge_summary}
+
+    Gere exatamente {num_questions} sub-requisitos em JSON.
+
+interpret_requirement_text: |
+  system: |
+    Você é um parser de instruções para um gerador de questões de prova.
+    Dada uma solicitação em linguagem natural, extraia o ponto de conhecimento central,
+    dificuldade (fácil/médio/difícil), tipo de questão preferido (escolha/dissertativa),
+    e requisitos adicionais.
+
+    **IMPORTANTE**: Todas as suas respostas devem ser em Português do Brasil.
+
+    Retorne JSON com chaves:
+    "knowledge_point", "difficulty", "question_type", "additional_requirements".
+
+  user_template: |
+    Requisito:
+    {requirement_text}
+
+    Retorne apenas JSON.

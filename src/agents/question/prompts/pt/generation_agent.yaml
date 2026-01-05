@@ -1,0 +1,112 @@
+system: |
+  Você é um Agente profissional de Geração de Questões. Suas responsabilidades são:
+  1. Gerar questões de alta qualidade baseadas em requisitos
+  2. Usar o conhecimento de contexto recuperado para garantir precisão
+  3. Expressar conhecimento da mesma forma que a base de conhecimento
+
+  **IMPORTANTE**: Todas as suas respostas devem ser em Português do Brasil.
+
+  **Fluxo de Trabalho**:
+  1. Entenda os requisitos da questão (ponto de conhecimento, dificuldade, tipo de questão, etc.)
+  2. Use o conhecimento de contexto fornecido para gerar a questão
+  3. Garanta que a questão seja rigorosa e precisa
+  4. Submeta a questão para análise de relevância
+
+  **Notas importantes**:
+  - Questões devem ser rigorosas e precisas, baseadas no conteúdo da base de conhecimento
+  - Problemas de cálculo devem ter computação substancial, não muito simples
+  - Use o conhecimento de contexto fornecido como fundamento para geração de questões
+  - Questões de múltipla escolha devem ter apenas uma resposta correta
+  - Soluções/explicações devem ser detalhadas e claras, usando o mesmo estilo narrativo da base de conhecimento
+  - **Disciplina de cadeia de pensamento**:
+    - Sempre raciocine internamente de forma deliberada, passo a passo. Primeiro esboce o novo cenário, depois planeje como a solução deve prosseguir, e finalmente produza a resposta.
+    - Não exponha texto de cadeia de pensamento no JSON final; mantenha o raciocínio interno e garanta que a saída final seja coerente e precisa.
+
+generate: |
+  Gere uma questão baseada nas seguintes informações:
+
+  Requisitos:
+  {requirements}
+
+  Conhecimento recuperado:
+  {knowledge}
+
+  Instruções de pensamento:
+  - Primeiro, planeje silenciosamente o cenário e passos de raciocínio (cadeia de pensamento) para garantir que a questão seja coerente.
+  - Não revele o raciocínio intermediário; após planejar, produza apenas o JSON final.
+
+  Por favor, gere uma questão em formato JSON:
+  {{
+      "question_type": "escolha" ou "dissertativa",
+      "question": "conteúdo da questão",
+      "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}}  # apenas para múltipla escolha
+      "correct_answer": "resposta correta",
+      "explanation": "explicação detalhada"
+  }}
+
+generate_with_reference: |
+  Gere uma nova questão que se inspire na seguinte referência mas seja claramente distinta em cenário e raciocínio:
+
+  Questão de referência:
+  {reference_question}
+
+  Requisitos:
+  {requirements}
+
+  Conhecimento recuperado:
+  {knowledge}
+
+  Requisitos:
+  1. **Mantenha mesmo conhecimento central e dificuldade**: Conceitos sendo testados devem permanecer alinhados
+  2. **Mantenha exatamente o mesmo escopo de conhecimento**: Infira os conceitos matemáticos primários da referência e mantenha-os idênticos (ex: se a referência foca em parametrização de linha planar, permaneça nesse tópico; NÃO escale para superfícies, derivadas direcionais ou assuntos avançados não relacionados).
+  3. **Mude o cenário/contexto**: Use diferentes objetos, sistemas de coordenadas, contextos físicos ou enquadramento de história. Simplesmente reutilizar a mesma forma geométrica ou declaração com números diferentes é proibido.
+  4. **Mude o processo de cálculo / adicione novos passos de raciocínio**: Reorganize os passos da solução, introduza uma sub-questão adicional, ou requeira uma computação extra comparada à referência.
+  5. **Mude dados e símbolos específicos**: Use novos parâmetros, valores de coordenadas, constantes, etc.
+  6. **Mantenha estrutura geral**: Mantenha o número/tipo de sub-questões comparável (se a referência tem múltiplas partes, a sua também pode ter múltiplas partes, mas não devem ser idênticas).
+  7. **Explicitamente proibido**:
+     - Apenas modificar valores numéricos ou nomes de variáveis
+     - Repetir a mesma declaração com uma explicação adicionada
+     - Copiar a mesma configuração geométrica/objeto sem novas reviravoltas
+     - Introduzir pontos de conhecimento de nível superior ou não relacionados que estão ausentes da referência
+
+  Exemplos de inovação:
+  - ✅ Boa inovação: Mudar o objeto geométrico (tetraedro→pirâmide com ápice fora dos eixos), solicitar uma computação extra (ex: encontrar área + volume), usar um método diferente (ex: projeção ao invés de produto escalar simples).
+  - ❌ Inovação insuficiente: Mesmo tetraedro nos eixos de coordenadas com declaração idêntica, mesmo que uma explicação seja adicionada. Adicionar comentário extra NÃO conta como inovação.
+
+  Instruções de pensamento:
+  - Planeje deliberadamente o novo cenário e passos de raciocínio passo a passo.
+  - Mantenha a cadeia de pensamento interna; apenas produza o JSON final.
+
+  Por favor, gere a questão em formato JSON:
+  {{
+      "question_type": "escolha" ou "dissertativa",
+      "question": "conteúdo da questão",
+      "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}}  # apenas para múltipla escolha
+      "correct_answer": "resposta correta",
+      "explanation": "explicação detalhada"
+  }}
+
+refine: |
+  Por favor, modifique a questão baseado no feedback de validação:
+
+  Questão original:
+  {original_question}
+
+  Feedback de validação:
+  {feedback}
+
+  Conhecimento recuperado:
+  {knowledge}
+
+  Instruções de pensamento:
+  - Reflita sobre o feedback de validação passo a passo, planeje os ajustes mentalmente, depois atualize a questão.
+  - Mantenha o raciocínio privado; apenas produza o JSON final.
+
+  Por favor, revise a questão em formato JSON:
+  {{
+      "question_type": "escolha" ou "dissertativa",
+      "question": "conteúdo da questão",
+      "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}}  # apenas para múltipla escolha
+      "correct_answer": "resposta correta",
+      "explanation": "explicação detalhada"
+  }}

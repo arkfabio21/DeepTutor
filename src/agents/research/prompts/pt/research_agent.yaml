@@ -1,0 +1,175 @@
+# Configuração de Prompts do ResearchAgent (Português)
+
+system:
+  role: |
+    Você é um especialista em estratégias de pesquisa profunda baseada em base de conhecimento, responsável por minerar sistematicamente conteúdo relacionado a tópicos da base de conhecimento e expandir para recursos externos conforme necessário.
+
+    **IMPORTANTE**: Todas as suas respostas devem ser em Português do Brasil.
+
+# Templates de orientação para conteúdo dinâmico
+guidance:
+  # Instrução de busca online quando web_search e paper_search estão habilitados
+  online_search_both: |
+    **Orientação de Avaliação de Busca Online (web_search e paper_search habilitados)**:
+
+    Ao avaliar a suficiência do conhecimento, além de avaliar a cobertura do conteúdo da base de conhecimento, você também precisa considerar:
+
+    1. **Avaliação de Atualidade do Conteúdo**:
+       - O conhecimento atual inclui os últimos desenvolvimentos, tendências da indústria e casos de aplicação?
+       - É necessário complementar as últimas informações de contexto e status atual de aplicação?
+       - O conteúdo da base de conhecimento pode estar desatualizado e precisa de suplementos de informações recentes?
+
+    2. **Avaliação de Extensão do Conhecimento**:
+       - O conhecimento foi estendido do conteúdo básico da base de conhecimento para incluir os últimos desenvolvimentos?
+       - O contexto em tempo real, casos da indústria e aplicações recentes foram complementados via web_search?
+       - A pesquisa acadêmica de ponta, avanços teóricos recentes e trabalhos de pesquisa específicos foram complementados via paper_search?
+
+    3. **Avaliação de Completude da Pesquisa**:
+       - Se o tópico envolve pesquisa de ponta ou últimos desenvolvimentos, o conteúdo relevante foi complementado via busca online?
+       - Uma cadeia completa de conhecimento desde fundamentos da base até últimos desenvolvimentos foi formada?
+
+    Critérios de Julgamento:
+    - Se o conteúdo da base foi totalmente explorado E informações em tempo real/pesquisa de ponta necessárias foram complementadas via busca online, considere suficiente
+    - Se o conteúdo da base foi totalmente explorado MAS faltam suplementos necessários de informações em tempo real/pesquisa de ponta, considere insuficiente
+    - Se o conteúdo da base não foi totalmente explorado, priorize continuar explorando a base, ignorando temporariamente a busca online
+
+  # Instrução de busca online quando apenas web_search está habilitado
+  online_search_web_only: |
+    **Orientação de Avaliação de Busca Online (web_search habilitado)**:
+
+    Ao avaliar a suficiência do conhecimento, além de avaliar a cobertura do conteúdo da base de conhecimento, você também precisa considerar:
+
+    1. **Avaliação de Atualidade do Conteúdo**:
+       - O conhecimento atual inclui os últimos desenvolvimentos, tendências da indústria e casos de aplicação?
+       - É necessário complementar as últimas informações de contexto e status atual de aplicação?
+       - O conteúdo da base de conhecimento pode estar desatualizado e precisa de suplementos de informações recentes?
+
+    2. **Avaliação de Extensão do Conhecimento**:
+       - O conhecimento foi estendido do conteúdo básico da base de conhecimento para incluir os últimos desenvolvimentos?
+       - O contexto em tempo real, casos da indústria e aplicações recentes foram complementados via web_search?
+
+    Critérios de Julgamento:
+    - Se o conteúdo da base foi totalmente explorado E informações em tempo real necessárias foram complementadas via web_search, considere suficiente
+    - Se o conteúdo da base foi totalmente explorado MAS faltam suplementos necessários de informações em tempo real, considere insuficiente
+    - Se o conteúdo da base não foi totalmente explorado, priorize continuar explorando a base, ignorando temporariamente web_search
+
+  # Instrução de busca online quando apenas paper_search está habilitado
+  online_search_paper_only: |
+    **Orientação de Avaliação de Busca Online (paper_search habilitado)**:
+
+    Ao avaliar a suficiência do conhecimento, além de avaliar a cobertura do conteúdo da base de conhecimento, você também precisa considerar:
+
+    1. **Avaliação de Pesquisa de Ponta**:
+       - O conhecimento atual inclui pesquisa acadêmica de ponta relevante e avanços teóricos recentes?
+       - É necessário complementar trabalhos de pesquisa específicos, métodos recentes e descobertas recentes?
+       - O conteúdo da base de conhecimento carece de perspectivas de pesquisa de ponta?
+
+    2. **Avaliação de Extensão do Conhecimento**:
+       - O conhecimento foi estendido do conteúdo básico da base de conhecimento para incluir pesquisa de ponta?
+       - Pesquisa acadêmica de ponta, avanços teóricos recentes e trabalhos de pesquisa específicos foram complementados via paper_search?
+
+    Critérios de Julgamento:
+    - Se o conteúdo da base foi totalmente explorado E pesquisa de ponta necessária foi complementada via paper_search, considere suficiente
+    - Se o conteúdo da base foi totalmente explorado MAS faltam suplementos necessários de pesquisa de ponta, considere insuficiente
+    - Se o conteúdo da base não foi totalmente explorado, priorize continuar explorando a base, ignorando temporariamente paper_search
+
+  # Critérios de modo de iteração para modo flexível
+  iteration_mode_flexible: |
+    - **Modo FLEXÍVEL (Automático)**: Você tem autonomia para decidir a suficiência.
+      - Você PODE concluir a suficiência mais cedo se o conhecimento for genuinamente abrangente
+      - Ainda assim garanta que os aspectos centrais sejam cobertos antes de concluir
+      - Qualidade sobre quantidade: foque em cobertura significativa, não em contagem de iterações
+
+  # Critérios de modo de iteração para modo fixo
+  iteration_mode_fixed: |
+    - **Modo FIXO**: Seja CONSERVADOR ao declarar suficiência.
+      - Em iterações iniciais (1-{early_threshold}): Raramente conclua suficiência. Continue explorando.
+      - Em iterações intermediárias: Exija evidência forte de cobertura abrangente.
+      - Apenas em iterações tardias ({early_threshold}+): Considere suficiência se verdadeiramente abrangente.
+      - O objetivo é exploração completa, não conclusão rápida.
+
+process:
+  check_sufficiency: |
+    Determine se o conhecimento atual para o seguinte tópico é suficiente. Apenas produza objeto JSON:
+
+    Tópico: {topic}
+    Visão Geral do Tópico: {overview}
+    Conhecimento Atual: {current_knowledge}
+    Contagem de Iterações: {iteration}
+    {online_search_instruction}
+    {research_depth_guidance}
+    {iteration_mode_criteria}
+
+    **Princípio Importante: Profundidade sobre Amplitude**
+
+    Você deve avaliar estrita e sistematicamente se o conhecimento atual realmente atende ao padrão de "pesquisa profunda", não apenas "cobertura superficial".
+
+    **Passos de Avaliação:**
+
+    1. **Identificar Elementos Centrais** (avalie pelo menos as seguintes 6 dimensões):
+       - □ Definição de Conceito: Há uma definição clara e completa?
+       - □ Princípios Centrais: O mecanismo de funcionamento, processo de derivação é profundamente explicado?
+       - □ Fórmulas/Algoritmos Chave: Inclui expressões matemáticas específicas ou passos de algoritmo?
+       - □ Cenários de Aplicação: Há casos de aplicação específicos ou análises de instâncias?
+       - □ Relacionamentos: As conexões com outros conceitos/campos são exploradas?
+       - □ Limitações e Desenvolvimento: Limitações, desafios ou desenvolvimentos de ponta são discutidos?
+
+    2. **Avaliar Cobertura Estritamente**:
+       - Conte o número de dimensões cobertas (pelo menos 4 dimensões precisam ser cobertas)
+       - Avalie a profundidade de cada dimensão (menção superficial vs. análise aprofundada)
+       - Identifique omissões-chave (quais dimensões estão completamente não abordadas ou insuficientemente profundas)
+
+    3. **Determinar Critérios de Suficiência**:
+       - **Suficiente** (is_sufficient=true): Atende todas as seguintes condições
+         ① Pelo menos 5 dimensões centrais cobertas
+         ② Cada dimensão coberta tem conteúdo substancial (não apenas mencionada)
+         ③ Contagem de iterações ≥ 3 (garantindo múltiplas rodadas de exploração)
+       - **Insuficiente** (is_sufficient=false): Qualquer condição não atendida
+
+    Saída JSON:
+    {{
+      "is_sufficient": true/false,
+      "covered_dimensions": ["Lista de dimensões cobertas"],
+      "missing_dimensions": ["Lista de dimensões faltantes ou insuficientemente profundas"],
+      "coverage_score": 0.0-1.0,
+      "reason": "Razão do julgamento (explique especificamente a cobertura e base do julgamento)"
+    }}
+
+  generate_query_plan: |
+    Quando o conhecimento for insuficiente, formule o próximo plano de consulta. Apenas produza objeto JSON:
+
+    Tópico: {topic}
+    Visão Geral do Tópico: {overview}
+    Conhecimento Atual: {current_knowledge}
+    Contagem de Iterações: {iteration}
+    Tópicos Existentes:
+    {existing_topics}
+
+    **Ferramentas Disponíveis (APENAS use estas ferramentas)**:
+    {available_tools}
+
+    {tool_phase_guidance}
+
+    **Princípios de Design de Consulta**:
+    1. **IMPORTANTE**: Apenas selecione das Ferramentas Disponíveis listadas acima. Não use ferramentas que não estão disponíveis.
+    2. Cada consulta deve visar uma lacuna específica de conhecimento
+    3. Evite duplicação com conteúdo existente no conhecimento atual
+    4. Consultas devem ser específicas e executáveis (evite ser muito amplo)
+    5. Se usar paper_search, deve usar palavras-chave em inglês
+
+    **Avaliação de Novo Tópico**: Apenas sugira adicionar um novo tópico ao descobrir um ramo importante altamente relacionado ao tema e completamente diferente dos tópicos existentes (pontuação ≥ 0.85)
+
+    Saída JSON:
+    {{
+      "query": "Declaração de consulta específica",
+      "tool_type": "Selecione das Ferramentas Disponíveis acima",
+      "target_dimension": "Dimensão de conhecimento visada por esta consulta",
+      "rationale": "Razão da seleção de ferramenta e objetivo da consulta",
+      "parallel": false,
+      "fallback": ["rag_hybrid", "rag_naive"],
+      "should_add_new_topic": false,
+      "new_sub_topic": null,
+      "new_overview": null,
+      "new_topic_reason": null,
+      "new_topic_score": 0.0
+    }}

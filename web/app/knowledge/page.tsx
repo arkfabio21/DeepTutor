@@ -17,6 +17,8 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { apiUrl, wsUrl } from "@/lib/api";
+import { useGlobal } from "@/context/GlobalContext";
+import { useTranslation } from "@/lib/i18n";
 
 interface KnowledgeBase {
   name: string;
@@ -45,6 +47,8 @@ interface ProgressInfo {
 }
 
 export default function KnowledgePage() {
+  const { language } = useGlobal();
+  const t = useTranslation(language);
   const [kbs, setKbs] = useState<KnowledgeBase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -575,10 +579,10 @@ export default function KnowledgePage() {
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-3">
             <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-            Knowledge Bases
+            {t("Knowledge Bases")}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2">
-            Manage and explore your educational content repositories.
+            {t("Knowledge Base Description")}
           </p>
         </div>
         <div className="flex gap-3">
@@ -591,7 +595,7 @@ export default function KnowledgePage() {
             title="Refresh knowledge bases"
           >
             <RefreshCw className="w-4 h-4" />
-            Refresh
+            {t("Refresh")}
           </button>
           <button
             onClick={() => {
@@ -602,7 +606,7 @@ export default function KnowledgePage() {
             className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/20"
           >
             <Plus className="w-4 h-4" />
-            New Knowledge Base
+            {t("Create New")}
           </button>
         </div>
       </div>
@@ -679,7 +683,7 @@ export default function KnowledgePage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg">
                     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1 flex items-center gap-1.5">
-                      <FileText className="w-3 h-3" /> Documents
+                      <FileText className="w-3 h-3" /> {t("Documents")}
                     </p>
                     <p className="text-lg font-bold text-slate-700 dark:text-slate-200">
                       {kb.statistics.raw_documents}
@@ -698,7 +702,7 @@ export default function KnowledgePage() {
                 <div className="pt-2">
                   <div className="flex items-center justify-between text-xs mb-2">
                     <span className="text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
-                      <Layers className="w-3 h-3" /> Status
+                      <Layers className="w-3 h-3" /> {t("Status")}
                     </span>
                     {(() => {
                       const progress = progressMap[kb.name];
@@ -837,7 +841,8 @@ export default function KnowledgePage() {
           {kbs.length === 0 && (
             <div className="col-span-full text-center py-12 text-slate-400 dark:text-slate-500">
               <Database className="w-12 h-12 mx-auto mb-4 opacity-20" />
-              <p>No knowledge bases found. Create one to get started.</p>
+              <p>{t("No knowledge bases yet")}</p>
+              <p className="text-sm mt-1">{t("Create your first knowledge base to get started")}</p>
             </div>
           )}
         </div>
@@ -849,7 +854,7 @@ export default function KnowledgePage() {
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in zoom-in-95">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                Create Knowledge Base
+                {t("Create New")}
               </h3>
               <button
                 onClick={() => setCreateModalOpen(false)}
@@ -862,7 +867,7 @@ export default function KnowledgePage() {
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Knowledge Base Name
+                  {t("Knowledge Base")}
                 </label>
                 <input
                   type="text"
@@ -876,7 +881,7 @@ export default function KnowledgePage() {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Upload Documents
+                  {t("Upload Document")}
                 </label>
                 <div
                   className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
@@ -922,7 +927,7 @@ export default function KnowledgePage() {
                   onClick={() => setCreateModalOpen(false)}
                   className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
-                  Cancel
+                  {t("Cancel")}
                 </button>
                 <button
                   type="submit"
@@ -949,7 +954,7 @@ export default function KnowledgePage() {
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in zoom-in-95">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
-                Upload Documents
+                {t("Upload Document")}
               </h3>
               <button
                 onClick={() => setUploadModalOpen(false)}
@@ -995,7 +1000,7 @@ export default function KnowledgePage() {
                   onClick={() => setUploadModalOpen(false)}
                   className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-700"
                 >
-                  Cancel
+                  {t("Cancel")}
                 </button>
                 <button
                   type="submit"

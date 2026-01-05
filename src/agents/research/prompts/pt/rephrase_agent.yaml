@@ -1,0 +1,60 @@
+# Configuração de Prompts do RephraseAgent (Português)
+
+system:
+  role: |
+    Você é um especialista em otimização de tópicos de pesquisa, responsável por transformar necessidades de pesquisa do usuário em tópicos de pesquisa claros, específicos e executáveis.
+
+    **IMPORTANTE**: Todas as suas respostas devem ser em Português do Brasil.
+
+process:
+  rephrase: |
+    Analise e otimize a seguinte entrada do usuário. Apenas produza objeto JSON:
+
+    Entrada do Usuário: {user_input}
+    Contagem de Iterações: {iteration}
+    {previous_result}
+
+    **Dimensões de Otimização:**
+
+    1. **Tópico de Pesquisa**: Transforme em um tópico claro, específico e pesquisável
+    2. **Foco de Pesquisa**: Identifique questões centrais e elementos-chave
+    3. **Escopo de Pesquisa**: Clarifique limites, defina profundidade e amplitude
+    4. **Fundamentação da Otimização**: Explique a base e lógica da otimização
+
+    Baseado nas considerações acima, gere um objetivo de pesquisa com tema proeminente, foco claro e escopo bem definido, com tamanho não excedendo o dobro da entrada do usuário.
+
+    Saída JSON:
+    {{
+        "topic": "Uma descrição clara e completa do tópico de pesquisa"
+    }}
+
+    Requisitos:
+    1. topic deve ser texto coerente que pode expressar informação completa independentemente
+    2. Quando iteration = 0, forneça foco e otimização razoáveis
+    3. Quando iteration > 0, ajuste baseado no feedback do usuário
+
+  check_satisfaction: |
+    Analise o feedback do usuário sobre o resultado da reformulação. Apenas produza objeto JSON:
+
+    Resultado Atual:
+    - Tópico: {topic}
+
+    Feedback do Usuário: {user_feedback}
+
+    **Dimensões de Julgamento:**
+    1. Se o usuário expressa explicitamente satisfação/insatisfação
+    2. Se requisitos específicos de modificação são propostos
+    3. Se o feedback é positivo ou negativo
+
+    Saída JSON:
+    {{
+        "user_satisfied": true/false,
+        "should_continue": true/false,
+        "interpretation": "Interpretação da intenção do usuário",
+        "suggested_action": "Próxima ação sugerida"
+    }}
+
+    Critérios de Julgamento:
+    - Satisfeito, concordo, ok, bom → user_satisfied = true, should_continue = false
+    - Solicita modificação ou levanta opiniões → user_satisfied = false, should_continue = true
+    - Feedback ambíguo → tenda a continuar otimização

@@ -1,0 +1,91 @@
+# Configuração de Prompts do DecomposeAgent (Português)
+
+system:
+  role: |
+    Você é um especialista em planejamento de pesquisa, responsável por decompor tópicos complexos em sistemas de subtópicos logicamente claros e não sobrepostos.
+
+    **IMPORTANTE**: Todas as suas respostas devem ser em Português do Brasil.
+
+process:
+  generate_queries: |
+    Gere {num_queries} consultas de busca para o seguinte tópico. Apenas produza objeto JSON:
+
+    Tópico: {topic}
+
+    Requisitos:
+    1. Cada consulta 1-3 palavras-chave, concisa e representativa
+    2. Cubra diferentes dimensões do tópico para garantir diversidade
+    3. Evite duplicação entre consultas
+
+    Saída JSON:
+    {{
+        "queries": ["Consulta 1", "Consulta 2", ...]
+    }}
+
+  decompose: |
+    Decomponha o tópico em subtópicos baseado nas seguintes informações. Apenas produza objeto JSON:
+
+    Tópico Principal: {topic}
+
+    Conhecimento de Contexto (da recuperação RAG):
+    {rag_context}
+
+    {decompose_requirement}
+
+    **Passos de Decomposição:**
+
+    1. **Analisar Conhecimento de Contexto**: Identifique conceitos centrais, teorias-chave e conteúdo importante
+
+    2. **Identificar Dimensões de Pesquisa**: Determine o foco de pesquisa para cada dimensão, garanta que as dimensões sejam complementares
+
+    3. **Gerar Subtópicos**:
+       - Baseado no conteúdo real do conhecimento de contexto
+       - Subtópicos são logicamente relacionados mas não duplicados
+       - Cubra os principais aspectos do tema
+
+    4. **Refinar Descrições**:
+       - title: Conciso e claro, expressando o núcleo do subtópico
+       - overview: 2-3 frases, explicando conteúdo, importância e valor de pesquisa
+
+    Saída JSON:
+    {{
+        "sub_topics": [
+            {{
+                "title": "Título do Subtópico",
+                "overview": "Visão geral detalhada, explicando conteúdo, foco e valor de pesquisa"
+            }}
+        ]
+    }}
+
+  decompose_without_rag: |
+    Decomponha o seguinte tópico de pesquisa em subtópicos claros e bem estruturados. Apenas produza objeto JSON:
+
+    Tópico Principal: {topic}
+
+    {decompose_requirement}
+
+    **Passos de Decomposição (Sem Contexto RAG):**
+
+    1. **Identificar Aspectos-Chave**: Baseado no seu conhecimento, identifique os aspectos-chave e dimensões deste tópico
+
+    2. **Gerar Subtópicos**:
+       - Cada subtópico deve cobrir um aspecto distinto do tópico principal
+       - Subtópicos devem ter relações lógicas mas não sobrepor ou duplicar
+       - Garanta que os subtópicos juntos formem um framework de pesquisa abrangente
+
+    3. **Refinar Descrições**:
+       - title: Conciso e claro, expressando o foco central do subtópico
+       - overview: 2-3 frases explicando:
+         - O que este subtópico cobre
+         - Por que é importante para entender o tópico principal
+         - Conceitos-chave ou áreas a explorar
+
+    Saída JSON:
+    {{
+        "sub_topics": [
+            {{
+                "title": "Título do subtópico (conciso e claro)",
+                "overview": "Visão geral detalhada (2-3 frases explicando importância, escopo e áreas-chave)"
+            }}
+        ]
+    }}

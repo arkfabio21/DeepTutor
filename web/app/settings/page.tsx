@@ -36,8 +36,8 @@ import { useGlobal } from "@/context/GlobalContext";
 
 interface UISettings {
   theme: "light" | "dark";
-  language: "zh" | "en";
-  output_language: "zh" | "en";
+  language: "zh" | "en" | "pt";
+  output_language: "zh" | "en" | "pt";
 }
 
 interface EnvInfo {
@@ -517,6 +517,7 @@ export default function SettingsPage() {
                   >
                     <option value="en">{t("English")}</option>
                     <option value="zh">{t("Chinese")}</option>
+                    <option value="pt">{t("Portuguese")}</option>
                   </select>
                 </div>
               </div>
@@ -547,6 +548,7 @@ export default function SettingsPage() {
                   >
                     <option value="en">English</option>
                     <option value="zh">Chinese</option>
+                    <option value="pt">Português (Brasil)</option>
                   </select>
                 </div>
               </div>

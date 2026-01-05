@@ -1,0 +1,88 @@
+validate: |
+  Por favor, valide a seguinte questão:
+
+  Questão:
+  {question}
+
+  {reference_section}
+
+  Conhecimento de validação recuperado:
+  {validation_knowledge}
+
+  Por favor, realize a validação e produza em formato JSON:
+  {{
+      "decision": "aprovar" ou "solicitar_modificação" ou "solicitar_regeneração",
+      "issues": ["problema1", "problema2", ...],  # Lista de problemas encontrados
+      "suggestions": ["sugestão1", "sugestão2", ...],  # Lista de sugestões de modificação
+      "reasoning": "Explicação detalhada do raciocínio de validação"
+  }}
+
+  Critérios de validação:
+  1. **Suficiência do conhecimento recuperado (julgamento leniente)**:
+     - ⚠️ **Importante**: A base de conhecimento pode não conter pontos de conhecimento básicos/de baixo nível, pois assume-se que os estudantes os dominam
+     - Se a questão envolve conhecimento básico (ex: produto escalar de vetores, magnitude, fórmulas básicas de cálculo), mas os resultados recuperados são conteúdo mais avançado, isso é **aceitável**
+     - **Critério de julgamento**: O conhecimento recuperado é relacionado aos **pontos de conhecimento centrais** da questão? Se a questão testa aplicação de conceitos avançados e você recuperou esse conceito avançado, deve ser aceito mesmo sem fórmulas básicas
+     - Apenas solicite regeneração quando o conhecimento recuperado é **completamente irrelevante** ou **pontos de conhecimento centrais não coincidem**
+
+  {innovation_section}
+
+  2. **Julgamento de nível de conhecimento**:
+     - Se o conhecimento recuperado é de **nível superior** ao conhecimento básico requerido pela questão, a base de conhecimento assume que esses básicos são dominados
+     - Exemplo: Questão usa produto escalar de vetores, recuperou conteúdo de cálculo multivariável → **aceitável** (cursos de cálculo assumem que estudantes conhecem vetores)
+     - Exemplo: Questão testa multiplicadores de Lagrange, recuperou multiplicadores de Lagrange → **aceitável** (mesmo sem definição básica de derivada parcial)
+
+  3. A resposta pode ser derivada do conhecimento recuperado? (Considere que conhecimento básico pode não estar na base de conhecimento)
+  4. Questões de múltipla escolha têm apenas uma resposta correta?
+  5. A declaração da questão é clara?
+  6. A explicação é suficiente?
+  7. Se há cálculo envolvido, o resultado está correto?
+
+  **Princípios de validação**:
+  - ✅ Seja leniente com conhecimento básico: Se a questão usa conhecimento básico mas recuperou conteúdo relacionado mais avançado, deve aceitar
+  - ✅ Foque em pontos de conhecimento centrais: Desde que os pontos centrais da questão sejam refletidos nos resultados de recuperação, o conhecimento é suficiente
+  - ✅ Questões que estendem além do conteúdo da KB são valiosas: Elas encorajam aprendizado mais amplo
+  - ❌ Ainda precisa validar baseado nos resultados de recuperação: Não pode usar seu próprio conhecimento, mas pode inferir razoavelmente que básicos são dominados
+  - ❌ Apenas solicite regeneração quando completamente irrelevante: Apenas requeira regeneração quando os resultados de recuperação são **completamente não relacionados** ao conteúdo central da questão
+
+  **Julgamentos de exemplo**:
+  - ✅ Aceitar: Questão usa operações vetoriais + recuperou conteúdo avançado de álgebra linear
+  - ✅ Aceitar: Questão usa diferenciação básica + recuperou conteúdo de cálculo multivariável
+  - ✅ Aceitar: Questão usa funções trigonométricas + recuperou conteúdo de análise complexa
+  - ⚠️ Solicitar modificação (não regeneração): Questão parcialmente relacionada mas precisa de ajuste
+  - ❌ Solicitar regeneração: Questão testa multiplicadores de Lagrange + recuperou conteúdo de teoria da probabilidade (completamente irrelevante)
+
+innovation_section: |
+  **Verificação especial para questões que imitam**:
+  - **Verificação de inovação**: Compare a questão gerada com a questão de referência
+  - ⚠️ **Inovação insuficiente** - Se apenas números/símbolos mudaram enquanto cenário, redação, estrutura e processo de solução permanecem os mesmos, ou se o gerador apenas adiciona uma explicação à mesma declaração, você DEVE retornar solicitar_modificação ou solicitar_regeneração.
+  - Exemplos de inovação insuficiente:
+    * Apenas mudou coordenadas de (1,2,3) para (4,5,6), todo o resto igual
+    * Apenas mudou parâmetro de k para m, processo de cálculo idêntico
+    * Apenas trocou valores numéricos, estrutura da questão completamente igual
+  - ⚠️ Adicionar explicações ou palavras extras sem mudar o cenário/requisitos NÃO conta como inovação.
+  - ✅ **Inovação suficiente** deve incluir:
+    * Mudou objetos geométricos ou estruturas matemáticas
+    * Mudou abordagem de cálculo ou método de solução
+    * Mudou cenário ou contexto da questão
+    * Mudou o que está sendo resolvido (ex: de ângulo para projeção)
+  - Se inovação é insuficiente, adicione aos problemas: "Inovação insuficiente: apenas dados mudaram, cenário e processo idênticos à referência"
+
+relevance_analysis: |
+  Analise a relevância entre a seguinte questão de prova e o conteúdo da base de conhecimento.
+
+  Questão:
+  {question}
+
+  Conteúdo da Base de Conhecimento:
+  {knowledge}
+
+  Por favor, analise e forneça uma resposta JSON:
+  {{
+      "relevance": "alta" ou "parcial",
+      "kb_coverage": "Descreva especificamente quais conceitos, teorias ou métodos da base de conhecimento esta questão testa.",
+      "extension_points": "Se relevância é 'parcial', descreva quais aspectos estendem além da base de conhecimento. Deixe vazio se 'alta'."
+  }}
+
+  Diretrizes:
+  - "alta": Questão pode ser totalmente respondida usando apenas o conteúdo da base de conhecimento
+  - "parcial": Questão é relacionada mas requer algum conhecimento além do que é fornecido

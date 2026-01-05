@@ -27,6 +27,7 @@ import { apiUrl, wsUrl } from "@/lib/api";
 import { processLatexContent } from "@/lib/latex";
 import AddToNotebookModal from "@/components/AddToNotebookModal";
 import { useGlobal } from "@/context/GlobalContext";
+import { useTranslation } from "@/lib/i18n";
 
 interface Notebook {
   id: string;
@@ -62,7 +63,8 @@ interface SelectedRecord extends NotebookRecord {
 
 export default function IdeaGenPage() {
   // Global state for persistence across page navigation
-  const { ideaGenState, setIdeaGenState } = useGlobal();
+  const { ideaGenState, setIdeaGenState, language } = useGlobal();
+  const t = useTranslation(language);
 
   // Notebook selection - now supports multiple notebooks
   const [notebooks, setNotebooks] = useState<Notebook[]>([]);
@@ -368,14 +370,14 @@ export default function IdeaGenPage() {
           <div className="p-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
             <h2 className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-              Select Source (Cross-Notebook)
+              {t("Select Source (Cross-Notebook)")}
             </h2>
             {selectedRecords.size > 0 && (
               <button
                 onClick={clearAllSelections}
                 className="text-xs text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400"
               >
-                Clear ({selectedRecords.size})
+                {t("Clear")} ({selectedRecords.size})
               </button>
             )}
           </div>
@@ -387,7 +389,7 @@ export default function IdeaGenPage() {
               </div>
             ) : notebooks.length === 0 ? (
               <div className="p-4 text-center text-sm text-slate-400 dark:text-slate-500">
-                No notebooks with records found
+                {t("No notebooks with records found")}
               </div>
             ) : (
               <div className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -439,7 +441,7 @@ export default function IdeaGenPage() {
                             </div>
                           ) : records.length === 0 ? (
                             <div className="py-2 text-xs text-slate-400 dark:text-slate-500 text-center">
-                              No records
+                              {t("No records")}
                             </div>
                           ) : (
                             <>
@@ -454,7 +456,7 @@ export default function IdeaGenPage() {
                                   }}
                                   className="text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
                                 >
-                                  Select All
+                                  {t("Select All")}
                                 </button>
                                 <button
                                   onClick={(e) => {
@@ -463,7 +465,7 @@ export default function IdeaGenPage() {
                                   }}
                                   className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                                 >
-                                  Cancel
+                                  {t("Cancel")}
                                 </button>
                               </div>
                               <div className="space-y-1">
@@ -545,12 +547,12 @@ export default function IdeaGenPage() {
               {isGenerating ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Generating...
+                  {t("Generating...")}
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  Generate Ideas ({selectedRecords.size} items)
+                  {t("Generate Ideas")} ({selectedRecords.size} {t("items")})
                 </>
               )}
             </button>
@@ -568,10 +570,10 @@ export default function IdeaGenPage() {
             </div>
             <div>
               <h1 className="font-bold text-slate-900 dark:text-slate-100">
-                IdeaGen
+                {t("IdeaGen")}
               </h1>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Discover research ideas from your notes
+                {t("IdeaGen Description")}
               </p>
             </div>
           </div>
@@ -582,7 +584,7 @@ export default function IdeaGenPage() {
                 onClick={selectAllIdeas}
                 className="px-3 py-1.5 text-xs text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/40 rounded-lg transition-colors"
               >
-                Select All
+                {t("Select All")}
               </button>
               <button
                 onClick={saveSelectedIdeas}
@@ -590,7 +592,7 @@ export default function IdeaGenPage() {
                 className="px-3 py-1.5 text-xs bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 flex items-center gap-1"
               >
                 <Save className="w-3 h-3" />
-                Save Selected
+                {t("Save")}
               </button>
             </div>
           )}
@@ -621,11 +623,10 @@ export default function IdeaGenPage() {
             <div className="h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
               <Brain className="w-16 h-16 text-slate-200 dark:text-slate-600 mb-4" />
               <p className="text-slate-500 dark:text-slate-400 text-center max-w-md">
-                Select notebook records and click "Generate Ideas"
+                {t("No ideas generated yet")}
                 <br />
                 <span className="text-xs text-slate-400 dark:text-slate-500 mt-2 block">
-                  System will analyze content, extract knowledge points, and
-                  generate research ideas
+                  {t("Start by entering a topic above")}
                 </span>
               </p>
             </div>

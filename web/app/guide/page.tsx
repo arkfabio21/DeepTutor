@@ -27,6 +27,8 @@ import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import { apiUrl } from "@/lib/api";
 import { processLatexContent } from "@/lib/latex";
+import { useGlobal } from "@/context/GlobalContext";
+import { useTranslation } from "@/lib/i18n";
 
 interface Notebook {
   id: string;
@@ -75,6 +77,11 @@ interface SessionState {
 }
 
 export default function GuidePage() {
+  // i18n
+  const { uiSettings } = useGlobal();
+  const language = uiSettings.language;
+  const t = useTranslation(language);
+
   // Multi-notebook selection (same as ideagen)
   const [notebooks, setNotebooks] = useState<Notebook[]>([]);
   const [expandedNotebooks, setExpandedNotebooks] = useState<Set<string>>(
@@ -807,14 +814,14 @@ ${html}
             <div className="p-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
               <h2 className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                Select Source (Cross-Notebook)
+                {t("Select Source (Cross-Notebook)")}
               </h2>
               {selectedRecords.size > 0 && (
                 <button
                   onClick={clearAllSelections}
                   className="text-xs text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400"
                 >
-                  Clear ({selectedRecords.size})
+                  {t("Clear")} ({selectedRecords.size})
                 </button>
               )}
             </div>
@@ -826,7 +833,7 @@ ${html}
                 </div>
               ) : notebooks.length === 0 ? (
                 <div className="p-4 text-center text-sm text-slate-400 dark:text-slate-500">
-                  No notebooks with records found
+                  {t("No notebooks with records found")}
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -878,7 +885,7 @@ ${html}
                               </div>
                             ) : records.length === 0 ? (
                               <div className="py-2 text-xs text-slate-400 dark:text-slate-500 text-center">
-                                No records
+                                {t("No records")}
                               </div>
                             ) : (
                               <>
@@ -893,7 +900,7 @@ ${html}
                                     }}
                                     className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
                                   >
-                                    Select All
+                                    {t("Select All")}
                                   </button>
                                   <button
                                     onClick={(e) => {
@@ -902,7 +909,7 @@ ${html}
                                     }}
                                     className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
                                   >
-                                    Deselect
+                                    {t("Deselect")}
                                   </button>
                                 </div>
                                 <div className="space-y-1">
@@ -970,12 +977,12 @@ ${html}
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Generating...
+                    {t("Generating...")}
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    Generate Learning Plan ({selectedRecords.size} items)
+                    {t("Generate Learning Plan")} ({selectedRecords.size} {t("items")})
                   </>
                 )}
               </button>
@@ -988,7 +995,7 @@ ${html}
           <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Learning Progress
+                {t("Learning Progress")}
               </span>
               <span className="text-xs text-slate-400 dark:text-slate-500">
                 {sessionState.progress}%
@@ -1018,12 +1025,12 @@ ${html}
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Generating...
+                      {t("Generating...")}
                     </>
                   ) : (
                     <>
                       <Play className="w-4 h-4" />
-                      Start Learning
+                      {t("Start Learning")}
                     </>
                   )}
                 </button>
@@ -1038,12 +1045,12 @@ ${html}
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Loading...
+                      {t("Loading")}
                     </>
                   ) : (
                     <>
                       <ChevronRight className="w-4 h-4" />
-                      Next
+                      {t("Next")}
                     </>
                   )}
                 </button>
@@ -1058,12 +1065,12 @@ ${html}
                   {isLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Generating Summary...
+                      {t("Generating...")}
                     </>
                   ) : (
                     <>
                       <CheckCircle2 className="w-4 h-4" />
-                      Complete Learning
+                      {t("Complete Learning")}
                     </>
                   )}
                 </button>
@@ -1076,7 +1083,7 @@ ${html}
         <div className="flex-1 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden">
           <div className="p-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
             <MessageSquare className="w-4 h-4" />
-            Learning Assistant
+            {t("Learning Assistant")}
           </div>
 
           <div
@@ -1210,7 +1217,7 @@ ${html}
                   onKeyDown={(e) =>
                     e.key === "Enter" && !e.shiftKey && handleSendMessage()
                   }
-                  placeholder="Have any questions? Feel free to ask..."
+                  placeholder={t("Have any questions? Feel free to ask...")}
                   disabled={sendingMessage}
                   className="flex-1 pl-4 pr-10 py-2.5 bg-slate-100 dark:bg-slate-700 border-transparent focus:bg-white dark:focus:bg-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 />
@@ -1269,12 +1276,10 @@ ${html}
           <div className="flex-1 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 p-8">
             <GraduationCap className="w-24 h-24 text-slate-200 dark:text-slate-600 mb-6" />
             <h3 className="text-lg font-medium text-slate-600 dark:text-slate-300 mb-2">
-              Guided Learning
+              {t("Guided Learning")}
             </h3>
             <p className="text-sm text-slate-400 dark:text-slate-500 max-w-md text-center leading-relaxed">
-              Select a notebook, and the system will generate a personalized
-              learning plan. Through interactive pages and intelligent Q&A,
-              you'll gradually master all the content.
+              {t("Select a notebook, and the system will generate a personalized learning plan...")}
             </p>
           </div>
         ) : isCompleted ? (
@@ -1283,7 +1288,7 @@ ${html}
             <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-gradient-to-r from-emerald-50 to-indigo-50 dark:from-emerald-900/20 dark:to-indigo-900/20 flex items-center justify-between shrink-0">
               <h2 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                Learning Summary
+                {t("Learning Summary")}
               </h2>
             </div>
             {/* Summary Content */}
@@ -1341,7 +1346,7 @@ ${html}
             <button
               onClick={() => setShowDebugModal(true)}
               className="absolute top-4 right-4 z-10 p-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors shadow-sm"
-              title="Fix HTML"
+              title={t("Fix HTML Issue")}
             >
               <Bug className="w-4 h-4 text-slate-600 dark:text-slate-300" />
             </button>
@@ -1381,7 +1386,7 @@ ${html}
             <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
               <h3 className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Bug className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                Fix HTML Issue
+                {t("Fix HTML Issue")}
               </h3>
               <button
                 onClick={() => {
@@ -1396,7 +1401,7 @@ ${html}
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
-                  Issue Description
+                  {t("Issue Description")}
                 </label>
                 <textarea
                   value={debugDescription}
@@ -1415,7 +1420,7 @@ ${html}
                 }}
                 className="px-4 py-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
-                Cancel
+                {t("Cancel")}
               </button>
               <button
                 onClick={handleFixHtml}
@@ -1425,12 +1430,12 @@ ${html}
                 {fixingHtml ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Fixing...
+                    {t("Fixing...")}
                   </>
                 ) : (
                   <>
                     <Bug className="w-4 h-4" />
-                    Fix
+                    {t("Apply Fix")}
                   </>
                 )}
               </button>

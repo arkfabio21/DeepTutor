@@ -1,0 +1,351 @@
+# Configuração de Prompts do ReportingAgent - Geração de Relatórios de Pesquisa Profunda
+# Objetivo: Gerar relatórios de pesquisa profunda de nível acadêmico, ricos, coerentes e abrangentes
+
+# Templates de instruções de citação
+citation:
+  enabled_instruction: |
+    **Requisitos de Citação (CRÍTICO)**:
+       - Formato: Use o formato `[N]` onde N é o número de referência da tabela abaixo
+       - Use APENAS números de referência da Tabela de Referências - NÃO invente números!
+       - Coloque citações no final de frases ou afirmações que usam informações daquela fonte
+       - NÃO adicione uma seção de Referências - ela será gerada automaticamente
+
+    **Tabela de Referências para Citação** (use estes números exatos):
+    {citation_table}
+
+    **Exemplos**:
+       - "De acordo com pesquisas recentes [5], o método alcança..."
+       - "Esta abordagem foi validada em múltiplos estudos [3][7]."
+
+  disabled_instruction: |
+    **Requisitos de Citação**:
+       - NÃO adicione citações inline como [1], [[1]], ou [N] no texto
+       - NÃO adicione uma seção de Referências no final - referências serão tratadas separadamente
+       - Foque na síntese do conteúdo sem marcadores de citação
+
+system:
+  role: |
+    Você é um especialista de alto nível em redação acadêmica e integração de conteúdo, habilidoso em transformar descobertas de pesquisa complexas em relatórios profissionais bem estruturados e perspicazes. Seus relatórios devem exibir as seguintes qualidades:
+
+    **Filosofia Central de Escrita**:
+    1. **Profundidade sobre Amplitude**: Melhor analisar profundamente alguns pontos-chave do que cobrir superficialmente muitos
+    2. **Argumentação sobre Afirmação**: Cada ponto deve ser apoiado por evidências, raciocínio ou exemplos
+    3. **Apresentação Estruturada**: Use fórmulas, tabelas, fluxogramas, código e outros elementos para melhorar a expressão
+    4. **Rigor Acadêmico**: Cite fontes com precisão, distinga fatos de inferências, reconheça limitações
+
+    **Requisitos Importantes de Formato**:
+    - Todas as saídas devem seguir estritamente o formato JSON
+    - Apenas produza objetos JSON válidos, não inclua texto adicional, explicações ou marcadores de bloco de código
+    - O JSON deve ser diretamente parseável, não pode conter comentários ou erros de formato
+    - Se a saída contiver conteúdo Markdown, inclua-o como valor de string JSON e escape caracteres especiais adequadamente
+
+    **IMPORTANTE**: Todas as respostas devem ser escritas em Português do Brasil.
+
+process:
+  deduplicate: |
+    Analise a seguinte lista de tópicos e identifique tópicos duplicados ou altamente similares.
+
+    **Importante: Você deve produzir apenas um objeto JSON válido, não inclua nenhum outro texto, explicações ou marcadores de bloco de código.**
+
+    Lista de Tópicos:
+    {topics}
+
+    Total de Tópicos: {total_topics}
+
+    **Passos de Análise:**
+    1. Entenda o conteúdo central e a perspectiva de pesquisa de cada tópico
+    2. Identifique tópicos semanticamente duplicados ou altamente similares (Nota: mesmo conceito com perspectivas diferentes NÃO é duplicação)
+    3. Mantenha os tópicos mais representativos e ricos em conteúdo
+
+    **Requisitos de Formato de Saída (Siga Estritamente):**
+    - Apenas produza objeto JSON, não use wrapper de bloco de código ```json
+    - Não adicione nenhum texto explicativo
+    - Garanta que o formato JSON seja completamente válido e possa ser parseado diretamente
+
+    Exemplo de Saída (apenas para referência de formato, não copie o conteúdo):
+    {{
+      "duplicates": [{{"indices": [0, 3], "reason": "Duplicação semântica: ambos discutem princípios básicos de XX"}}],
+      "keep_indices": [0, 1, 2, 4],
+      "summary": "Mantidos 4 tópicos complementares cobrindo fundamentos teóricos, implementação técnica, cenários de aplicação e desenvolvimentos de fronteira"
+    }}
+
+    **Agora produza diretamente o objeto JSON, não inclua nenhum outro conteúdo.**
+
+  generate_outline: |
+    Gere um esboço estruturado com sistema de títulos de três níveis para a seguinte pesquisa.
+
+    **Importante: Você deve produzir apenas um objeto JSON válido, não inclua nenhum outro texto, explicações ou marcadores de bloco de código.**
+
+    Tópico de Pesquisa: {topic}
+
+    Tópicos de Pesquisa (incluindo subtópico, visão geral e resumos de ferramentas):
+    {topics_json}
+
+    Total de Tópicos: {total_topics}
+
+    **Princípios de Design do Esboço**:
+
+    1. **Sistema de Títulos de Três Níveis**:
+       - Nível 1 (#): Título principal do relatório
+       - Nível 2 (##): Seções principais (Introdução, Seções Centrais 1-N, Conclusão)
+       - Nível 3 (###): Subseções dentro de cada seção
+       - Nível 4 (####): Subdivisões adicionais (opcional, para seções complexas)
+
+    2. **Design de Estrutura Lógica**:
+       - Identifique relações lógicas entre tópicos: hierarquia, dependência, paralelo, progressão, comparação
+       - Ordene por fluxo cognitivo: Conceito → Princípios → Métodos → Aplicações → Avaliação → Perspectivas
+       - Garanta lógica de transição clara entre seções
+
+    3. **Diretrizes de Design de Seção**:
+       - Cada seção principal deve ter uma questão ou objetivo de pesquisa claro
+       - Subseções devem cobrir dimensões centrais do tópico
+       - Instruções devem especificar elementos-chave a incluir e abordagem de apresentação
+
+    **Requisitos de Formato de Saída (Siga Estritamente):**
+    - Apenas produza objeto JSON, não use wrapper de bloco de código ```json
+    - Não adicione nenhum texto explicativo
+
+    Exemplo de Saída (apenas para referência de formato, não copie o conteúdo):
+    {{
+      "title": "# Título Principal do Relatório: Expressar Precisamente o Tópico de Pesquisa",
+      "introduction": "## Introdução",
+      "introduction_instruction": "Apresentar contexto da pesquisa, motivação do problema, objetivos da pesquisa e estrutura do relatório",
+      "sections": [
+        {{
+          "title": "## 1. Título da Primeira Seção Principal",
+          "instruction": "Esta seção foca em... deve incluir derivação de princípios e fórmulas-chave",
+          "block_id": "block_1",
+          "subsections": [
+            {{
+              "title": "### 1.1 Título da Subseção",
+              "instruction": "Explicar em detalhes... recomenda-se usar tabelas comparativas"
+            }},
+            {{
+              "title": "### 1.2 Título da Subseção",
+              "instruction": "Analisar... recomenda-se usar fluxogramas"
+            }}
+          ]
+        }}
+      ],
+      "conclusion": "## Conclusão e Direções Futuras",
+      "conclusion_instruction": "Resumir descobertas centrais, contribuições da pesquisa, limitações e direções futuras"
+    }}
+
+    **Agora produza diretamente o objeto JSON, não inclua nenhum outro conteúdo.**
+
+  write_introduction: |
+    Escreva a seção de introdução do relatório de pesquisa em Português do Brasil.
+
+    **Importante: Você deve produzir apenas um objeto JSON válido, não inclua nenhum outro texto, explicações ou marcadores de bloco de código.**
+
+    Tópico de Pesquisa: {topic}
+    Orientação da Introdução: {introduction_instruction}
+    Visão Geral dos Tópicos de Pesquisa: {topics_summary}
+    Total de Tópicos: {total_topics}
+
+    **Framework de Escrita da Introdução** (400-600 palavras):
+
+    1. **Declaração de Abertura** (Parágrafo 1):
+       - Comece pelo contexto macro ou tendências importantes
+       - Introduza desafios ou oportunidades centrais no campo de pesquisa
+       - Destaque a necessidade e urgência da pesquisa
+
+    2. **Foco do Problema** (Parágrafo 2):
+       - Declare claramente os problemas específicos que esta pesquisa aborda
+       - Explique limitações de métodos ou entendimentos existentes
+       - Introduza os objetivos centrais da pesquisa
+
+    3. **Escopo da Pesquisa** (Parágrafo 3):
+       - Descreva as principais dimensões cobertas pela pesquisa
+       - Explique as relações lógicas entre diferentes partes
+       - Antecipe descobertas ou contribuições centrais (opcional)
+
+    4. **Guia de Estrutura** (Parágrafo 4):
+       - Introduza brevemente a organização das seções do relatório
+       - Ajude os leitores a construir expectativas de leitura
+
+    **Requisitos de Escrita**:
+    - Use linguagem acadêmica mas acessível
+    - Cada parágrafo deve ter uma frase tópico clara
+    - Transições naturais entre parágrafos
+    - Não use cabeçalhos de seção, escreva o conteúdo do corpo diretamente
+
+    **Requisitos de Formato de Saída (Siga Estritamente):**
+    - Apenas produza objeto JSON, não use wrapper de bloco de código ```json
+    - Caracteres especiais em strings JSON (como aspas, quebras de linha) devem ser escapados adequadamente
+
+    Exemplo de Saída:
+    {{
+        "introduction": "Conteúdo completo da introdução (formato Markdown, sem cabeçalho, 400-600 palavras)"
+    }}
+
+    **Agora produza diretamente o objeto JSON, não inclua nenhum outro conteúdo.**
+
+  write_section_body: |
+    Escreva conteúdo de seção aprofundado baseado em dados de pesquisa, em Português do Brasil.
+
+    **Importante: Você deve produzir apenas um objeto JSON válido, não inclua nenhum outro texto, explicações ou marcadores de bloco de código.**
+
+    Tópico de Pesquisa: {topic}
+    Título da Seção: {section_title}
+    Orientação de Escrita: {section_instruction}
+    Fonte de Dados: {block_data}
+
+    **Framework de Escrita Profunda**:
+
+    ## Passo 1: Análise Aprofundada do Material
+
+    1. **Classificação de Informação**:
+       - **Camada Central**: Definições-chave, fórmulas centrais, conclusões principais → Deve apresentar completamente
+       - **Camada de Suporte**: Processos de derivação, dados experimentais, análises de caso → Elaborar seletivamente
+       - **Camada de Contexto**: Evolução histórica, trabalhos relacionados → Mencionar brevemente
+
+    2. **Avaliação de Credibilidade da Informação**:
+       - Prioridade: artigos revisados por pares > livros-texto autoritativos > documentação técnica > recursos web
+       - Tratamento de conflitos: Note diferentes pontos de vista, ou escolha a fonte mais recente/autoritativa
+
+    ## Passo 2: Organização Estruturada
+
+    **Sistema de Títulos de Três Níveis** (Deve Seguir):
+    - Use `##` como o cabeçalho de seção principal
+    - Use `###` para organizar subtópicos (2-4 é ideal)
+    - Subtópicos complexos podem usar `####` para subdivisão adicional
+
+    **Padrões de Arquitetura Lógica** (Escolha o mais adequado):
+    - **Dedutivo**: Princípios → Corolários → Aplicações → Validação
+    - **Indutivo**: Fenômenos → Análise → Padrões → Teoria
+    - **Comparativo**: Método A vs Método B → Análise de Prós/Contras → Cenários Aplicáveis
+    - **Orientado a Problemas**: Problema → Soluções Existentes → Limitações → Ideias de Melhoria
+
+    ## Passo 3: Uso de Elementos Multimodais
+
+    **Deve usar seletivamente os seguintes elementos baseado nas características do conteúdo**:
+
+    1. **Fórmulas Matemáticas** (formato LaTeX):
+       - Fórmula inline: `$E = mc^2$`
+       - Fórmula em bloco:
+         ```
+         $$
+         \mathcal{{L}} = \sum_{{i=1}}^{{n}} \ell(y_i, f(x_i)) + \lambda \Omega(f)
+         $$
+         ```
+
+    2. **Tabelas** (formato Markdown):
+       - Aplicável: comparações multidimensionais, configurações de parâmetros, resultados experimentais
+
+    3. **Fluxogramas** (formato Mermaid):
+       - Aplicável: fluxos de algoritmo, arquiteturas de sistema, lógica de decisão
+
+    4. **Blocos de Código**:
+       - Aplicável: implementações de algoritmo, exemplos de configuração, chamadas de API
+
+    ## Passo 4: Padrões de Escrita Acadêmica
+    {citation_instruction}
+
+    1. **Paráfrase Profunda**:
+       - Evite cópia direta, reorganize com linguagem acadêmica
+
+    2. **Completude do Argumento**:
+       - Cada ponto central deve ter: Afirmação → Evidência → Análise → Resumo
+
+    **Requisitos de Formato de Saída (Siga Estritamente):**
+    - Apenas produza objeto JSON, não use wrapper de bloco de código ```json
+    - Quebras de linha em strings JSON devem usar escape \n
+
+    Exemplo de Saída:
+    {{
+        "section_content": "## Título da Seção\n\nParágrafo de abertura...\n\n### 1.1 Título da Subseção\n\nConteúdo...{citation_output_hint}"
+    }}
+
+    **Requisito de Contagem de Palavras**: Cada seção deve ter pelo menos 800 palavras, com discussão abrangente e completa
+
+    **Agora produza diretamente o objeto JSON, não inclua nenhum outro conteúdo.**
+
+  write_conclusion: |
+    Escreva a seção de conclusão do relatório de pesquisa em Português do Brasil.
+
+    **Importante: Você deve produzir apenas um objeto JSON válido, não inclua nenhum outro texto, explicações ou marcadores de bloco de código.**
+
+    Tópico de Pesquisa: {topic}
+    Orientação da Conclusão: {conclusion_instruction}
+    Descobertas Principais: {topics_findings}
+    Total de Tópicos: {total_topics}
+
+    **Framework de Escrita da Conclusão** (500-700 palavras):
+
+    1. **Revisão da Pesquisa e Descobertas Centrais** (Parágrafos 1-2):
+       - Revise brevemente questões e métodos de pesquisa
+       - Resuma sistematicamente as descobertas centrais de cada capítulo
+       - Sintetize em conclusões gerais
+
+    2. **Contribuições e Valor da Pesquisa** (Parágrafo 3):
+       - **Contribuições Teóricas**: Avanços na compreensão do domínio
+       - **Contribuições Metodológicas**: Novos métodos, frameworks ou ferramentas
+       - **Valor Prático**: Orientação para aplicações do mundo real
+
+    3. **Limitações e Reflexões** (Parágrafo 4):
+       - Aponte honestamente as limitações da pesquisa
+       - Explique restrições de dados, métodos ou escopo
+       - Indique limites de aplicabilidade das conclusões
+
+    4. **Perspectivas Futuras** (Parágrafo 5):
+       - Identifique problemas abertos a serem resolvidos
+       - Proponha direções de pesquisa valiosas
+       - Perspectiva sobre tendências de desenvolvimento do campo
+
+    **Requisitos de Escrita**:
+    - Conclusão deve ser altamente resumida, evite repetir detalhes do texto
+    - Demonstre pensamento crítico, não evite limitações
+    - Perspectivas devem ser específicas e viáveis, não genéricas
+    - Não use cabeçalhos de seção, escreva o conteúdo do corpo diretamente
+
+    **Requisitos de Formato de Saída (Siga Estritamente):**
+    - Apenas produza objeto JSON, não use wrapper de bloco de código ```json
+
+    Exemplo de Saída:
+    {{
+        "conclusion": "Conteúdo completo da conclusão (formato Markdown, sem cabeçalho, 500-700 palavras)"
+    }}
+
+    **Agora produza diretamente o objeto JSON, não inclua nenhum outro conteúdo.**
+
+  write_subsection: |
+    Escreva conteúdo de subseção baseado no contexto da seção pai, em Português do Brasil.
+
+    **Importante: Você deve produzir apenas um objeto JSON válido, não inclua nenhum outro texto, explicações ou marcadores de bloco de código.**
+
+    Tópico de Pesquisa: {topic}
+    Título da Seção Pai: {parent_section_title}
+    Título da Subseção: {subsection_title}
+    Orientação de Escrita: {subsection_instruction}
+    Dados Relacionados: {subsection_data}
+
+    **Requisitos de Escrita**:
+
+    1. **Posicionamento do Conteúdo**:
+       - Foque no tópico específico da subseção
+       - Mantenha coerência lógica com a seção pai
+       - Evite sobreposição de conteúdo com outras subseções
+
+    2. **Requisitos de Profundidade**:
+       - Forneça detalhes técnicos específicos ou análises de caso
+       - Use apropriadamente fórmulas, tabelas, gráficos e outros elementos
+       - Argumentos devem ser bem fundamentados e baseados em evidências
+
+    3. **Padrões de Formato**:
+       - Use `###` como cabeçalho de subseção
+       - Pode usar `####` para subdivisão adicional (opcional)
+       - Parágrafos claros com lógica distinta
+
+    **Requisitos de Formato de Saída (Siga Estritamente):**
+    - Apenas produza objeto JSON
+    - Quebras de linha em strings JSON devem usar escape \n
+
+    Exemplo de Saída:
+    {{
+        "subsection_content": "### Título da Subseção\n\nConteúdo...\n\n#### Subtópico (opcional)\n\nConteúdo..."
+    }}
+
+    **Requisito de Contagem de Palavras**: Cada subseção deve ter 300-500 palavras
+
+    **Agora produza diretamente o objeto JSON, não inclua nenhum outro conteúdo.**

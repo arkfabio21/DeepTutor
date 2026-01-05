@@ -65,8 +65,8 @@ services:
       - NEXT_PUBLIC_API_BASE_EXTERNAL=${NEXT_PUBLIC_API_BASE_EXTERNAL:-}
 
     volumes:
-      # Mount local config directory (read-only)
-      - ./config:/app/config:ro
+      # Mount local config directory (read-write for settings)
+      - ./config:/app/config
       # Mount local data directory for persistence (read-write)
       # This ensures all outputs go to your local ./data directory
       - ./data/user:/app/data/user

@@ -21,6 +21,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useGlobal } from "@/context/GlobalContext";
+import { useTranslation } from "@/lib/i18n";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
@@ -38,7 +39,9 @@ export default function QuestionPage() {
     startQuestionGen,
     startMimicQuestionGen,
     resetQuestionGen,
+    language,
   } = useGlobal();
+  const t = useTranslation(language);
 
   // Dashboard state for parallel generation
   const [dashboardState, dispatchDashboard] = useQuestionReducer();
@@ -152,7 +155,7 @@ export default function QuestionPage() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-semibold">
               <PenTool className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              Question Generator
+              {t("Question Generator")}
             </div>
 
             {/* Mode Switching - disabled when generating */}
@@ -324,7 +327,7 @@ export default function QuestionPage() {
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                          Question Count
+                          {t("Question Count")}
                         </label>
                         <div className="flex items-center gap-4">
                           <input
@@ -383,7 +386,7 @@ export default function QuestionPage() {
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                          Difficulty
+                          {t("Difficulty")}
                         </label>
                         <div className="flex bg-slate-50 dark:bg-slate-700 p-1 rounded-xl border border-slate-200 dark:border-slate-600">
                           {["easy", "medium", "hard"].map((lvl) => (
@@ -413,24 +416,24 @@ export default function QuestionPage() {
                         </label>
                         <div className="flex bg-slate-50 dark:bg-slate-700 p-1 rounded-xl border border-slate-200 dark:border-slate-600">
                           {[
-                            { id: "choice", label: "Multiple Choice" },
+                            { id: "choice", label: t("Multiple Choice") },
                             { id: "written", label: "Written" },
-                          ].map((t) => (
+                          ].map((qType) => (
                             <button
-                              key={t.id}
+                              key={qType.id}
                               onClick={() =>
                                 setQuestionState((prev) => ({
                                   ...prev,
-                                  type: t.id,
+                                  type: qType.id,
                                 }))
                               }
                               className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-                                questionState.type === t.id
+                                questionState.type === qType.id
                                   ? "bg-white dark:bg-slate-600 text-purple-700 dark:text-purple-400 shadow-sm"
                                   : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                               }`}
                             >
-                              {t.label}
+                              {qType.label}
                             </button>
                           ))}
                         </div>
@@ -580,7 +583,7 @@ export default function QuestionPage() {
                   className="w-full py-4 bg-purple-600 text-white rounded-xl font-bold text-lg shadow-lg shadow-purple-500/30 hover:bg-purple-700 hover:shadow-purple-500/50 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Sparkles className="w-5 h-5" />
-                  Generate Questions
+                  {t("Generate Questions")}
                 </button>
               </div>
             </div>
@@ -643,7 +646,7 @@ export default function QuestionPage() {
                     </div>
                   </div>
                   <p className="font-medium text-slate-600 dark:text-slate-300">
-                    Generating questions...
+                    {t("Generating...")}
                   </p>
                   <p className="text-sm text-center max-w-xs">
                     Switch to the Process tab to see detailed progress
@@ -674,7 +677,7 @@ export default function QuestionPage() {
                           className="ml-auto text-xs font-medium text-indigo-500 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 flex items-center gap-1 px-2 py-1 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors"
                         >
                           <Book className="w-3 h-3" />
-                          Add to Notebook
+                          {t("Add to Notebook")}
                         </button>
                       </div>
                     </div>
@@ -986,13 +989,13 @@ export default function QuestionPage() {
                           <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700 bg-emerald-50 dark:bg-emerald-900/30">
                             <h4 className="text-emerald-800 dark:text-emerald-300 font-semibold flex items-center gap-2">
                               <BookOpen className="w-4 h-4" />
-                              Answer & Explanation
+                              {t("Correct Answer")} & {t("Explanation")}
                             </h4>
                           </div>
                           <div className="p-4 flex-1 overflow-y-auto">
                             <div className="mb-4 p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg border border-emerald-100 dark:border-emerald-800">
                               <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-1">
-                                Correct Answer
+                                {t("Correct Answer")}
                               </p>
                               <div className="text-emerald-800 dark:text-emerald-200 text-base leading-relaxed [&_.katex]:text-emerald-800 dark:[&_.katex]:text-emerald-200 [&_.katex-display]:my-3 [&_.katex-display]:overflow-x-auto">
                                 <ReactMarkdown
