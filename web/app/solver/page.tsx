@@ -53,8 +53,8 @@ const resolveArtifactUrl = (url?: string | null, outputDir?: string) => {
 };
 
 export default function SolverPage() {
-  const { solverState, setSolverState, startSolver, language } = useGlobal();
-  const t = useTranslation(language);
+  const { solverState, setSolverState, startSolver, uiSettings } = useGlobal();
+  const t = useTranslation(uiSettings.language);
 
   // Local state for input
   const [inputQuestion, setInputQuestion] = useState("");

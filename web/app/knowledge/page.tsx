@@ -47,8 +47,8 @@ interface ProgressInfo {
 }
 
 export default function KnowledgePage() {
-  const { language } = useGlobal();
-  const t = useTranslation(language);
+  const { uiSettings } = useGlobal();
+  const t = useTranslation(uiSettings.language);
   const [kbs, setKbs] = useState<KnowledgeBase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

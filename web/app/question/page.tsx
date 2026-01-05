@@ -39,9 +39,9 @@ export default function QuestionPage() {
     startQuestionGen,
     startMimicQuestionGen,
     resetQuestionGen,
-    language,
+    uiSettings,
   } = useGlobal();
-  const t = useTranslation(language);
+  const t = useTranslation(uiSettings.language);
 
   // Dashboard state for parallel generation
   const [dashboardState, dispatchDashboard] = useQuestionReducer();

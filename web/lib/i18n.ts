@@ -152,7 +152,6 @@ export const translations = {
       "Please configure your settings above, then enter a research topic below.",
     "Optimizing topic...": "Optimizing topic....",
     "Start research?": "Start research?",
-    "Start Research": "Start Research",
     "Network error. Try again.": "Network error. Try again.",
 
     // Guide Page
@@ -172,7 +171,6 @@ export const translations = {
     "Learning Assistant": "Learning Assistant",
     "Have any questions? Feel free to ask...":
       "Have any questions? Feel free to ask...",
-    "Guided Learning": "Guided Learning",
     "Select a notebook, and the system will generate a personalized learning plan...":
       "Select a notebook, and the system will generate a personalized learning plan...",
     "Learning Summary": "Learning Summary",
@@ -291,7 +289,6 @@ export const translations = {
     "Process": "Process",
     "Report": "Report",
     "Enter a topic in the left panel to start deep research.": "Enter a topic in the left panel to start deep research.",
-    "Add to Notebook": "Add to Notebook",
     "Generating report preview...": "Generating report preview...",
 
     // CoWriterEditor
@@ -356,9 +353,7 @@ export const translations = {
     "Select content from your notebooks to import": "Select content from your notebooks to import",
     "No notebooks found": "No notebooks found",
     "Select a notebook to view records": "Select a notebook to view records",
-    "No records": "No records",
     "Selected": "Selected",
-    "items": "items",
     "Import Selected": "Import Selected",
   },
   zh: {
@@ -526,7 +521,6 @@ export const translations = {
     "Complete Learning": "完成学习",
     "Learning Assistant": "学习助手",
     "Have any questions? Feel free to ask...": "有问题吗？随时问...",
-    "Guided Learning": "引导式学习",
     "Select a notebook, and the system will generate a personalized learning plan...":
       "选择一个笔记本，系统将生成个性化学习计划...",
     "Learning Summary": "学习总结",
@@ -642,7 +636,6 @@ export const translations = {
     "Process": "过程",
     "Report": "报告",
     "Enter a topic in the left panel to start deep research.": "在左侧面板输入主题以开始深度研究。",
-    "Add to Notebook": "添加到笔记本",
     "Generating report preview...": "生成报告预览...",
 
     // CoWriterEditor
@@ -707,9 +700,7 @@ export const translations = {
     "Select content from your notebooks to import": "选择要导入的笔记本内容",
     "No notebooks found": "未找到笔记本",
     "Select a notebook to view records": "选择笔记本以查看记录",
-    "No records": "无记录",
     "Selected": "已选择",
-    "items": "项",
     "Import Selected": "导入所选",
   },
   pt: {
@@ -885,7 +876,6 @@ export const translations = {
     "Learning Assistant": "Assistente de Aprendizado",
     "Have any questions? Feel free to ask...":
       "Tem alguma dúvida? Sinta-se à vontade para perguntar...",
-    "Guided Learning": "Aprendizado Guiado",
     "Select a notebook, and the system will generate a personalized learning plan...":
       "Selecione um caderno e o sistema gerará um plano de aprendizado personalizado...",
     "Learning Summary": "Resumo do Aprendizado",
@@ -1004,7 +994,6 @@ export const translations = {
     "Process": "Processo",
     "Report": "Relatório",
     "Enter a topic in the left panel to start deep research.": "Digite um tópico no painel esquerdo para iniciar a pesquisa profunda.",
-    "Add to Notebook": "Adicionar ao Caderno",
     "Generating report preview...": "Gerando prévia do relatório...",
 
     // CoWriterEditor
@@ -1069,9 +1058,7 @@ export const translations = {
     "Select content from your notebooks to import": "Selecione conteúdo dos seus cadernos para importar",
     "No notebooks found": "Nenhum caderno encontrado",
     "Select a notebook to view records": "Selecione um caderno para ver registros",
-    "No records": "Sem registros",
     "Selected": "Selecionado",
-    "items": "itens",
     "Import Selected": "Importar Selecionados",
   },
 };

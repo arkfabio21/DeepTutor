@@ -63,8 +63,8 @@ interface SelectedRecord extends NotebookRecord {
 
 export default function IdeaGenPage() {
   // Global state for persistence across page navigation
-  const { ideaGenState, setIdeaGenState, language } = useGlobal();
-  const t = useTranslation(language);
+  const { ideaGenState, setIdeaGenState, uiSettings } = useGlobal();
+  const t = useTranslation(uiSettings.language);
 
   // Notebook selection - now supports multiple notebooks
   const [notebooks, setNotebooks] = useState<Notebook[]>([]);

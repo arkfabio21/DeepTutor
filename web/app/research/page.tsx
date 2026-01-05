@@ -47,9 +47,9 @@ export default function ResearchPage() {
   const {
     researchState: globalResearchState,
     setResearchState: setGlobalResearchState,
-    language,
+    uiSettings,
   } = useGlobal();
-  const t = useTranslation(language);
+  const t = useTranslation(uiSettings.language);
 
   // Local Reducer State for Deep Research Dashboard
   const [state, dispatch] = useResearchReducer();
@@ -119,7 +119,7 @@ export default function ResearchPage() {
         },
       ]);
     }
-  }, [language]);
+  }, [uiSettings.language]);
 
   // Select latest active task automatically if none selected
   useEffect(() => {

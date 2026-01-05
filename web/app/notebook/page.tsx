@@ -129,8 +129,8 @@ const getRecordColor = (type: string) => {
 };
 
 export default function NotebookPage() {
-  const { language } = useGlobal();
-  const t = useTranslation(language);
+  const { uiSettings } = useGlobal();
+  const t = useTranslation(uiSettings.language);
   const [notebooks, setNotebooks] = useState<NotebookSummary[]>([]);
   const [selectedNotebook, setSelectedNotebook] = useState<Notebook | null>(
     null,

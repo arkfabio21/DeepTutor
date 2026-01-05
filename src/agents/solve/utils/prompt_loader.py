@@ -35,10 +35,10 @@ class PromptLoader:
         Set language
 
         Args:
-            language: Language code ('zh' | 'en')
+            language: Language code ('zh' | 'en' | 'pt')
         """
-        if language not in ["zh", "en"]:
-            raise ValueError(f"Unsupported language: {language}, only 'zh' or 'en' supported")
+        if language not in ["zh", "en", "pt"]:
+            raise ValueError(f"Unsupported language: {language}, only 'zh', 'en' or 'pt' supported")
 
         self.language = language
         # Clear cache because language changed
